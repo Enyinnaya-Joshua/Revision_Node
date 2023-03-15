@@ -1,1 +1,2 @@
-export * from "./errorhandler";
+export * from "./error.handler.ts";
+export * from "./validator/index";

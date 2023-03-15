@@ -1,35 +1,32 @@
 import express, { Application, NextFunction, Request, Response } from "express";
-import cors from "cors";
 import morgan from "morgan";
-import { errorHandler } from "./middleware/errorhandler";
-import { AppError, HttpCode } from "./utils/AppError";
-import api from "./api";
+import cors from "cors";
+import { AppError, HttpCode } from "./utils/app.error";
+import { errorHandler } from "./middleware/error.handler.ts";
+import api from "./api/index";
 
 const appConfig = (app: Application) => {
+  // Application
   app
+
+    // Middle Ware
+
     .use(express.json())
     .use(cors())
     .use(morgan("dev"))
 
-    // Api endpoint
-
+    // Api EndPoints
     .use("/api", api)
 
-    // check for unavailable route
     .all("*", (req: Request, res: Response, next: NextFunction) => {
-      //   res.status(404).json({
-      //     message: `This route ${req.originalUrl} is not found`,
-      //   });
-
       next(
         new AppError({
-          httpCode: HttpCode.NON_FOUND,
-          message: `This route ${req.originalUrl} doesn't exist`,
+          httpCode: HttpCode.NOT_FOUND,
+          message: `This routes ${req.originalUrl} doesn't exist`,
         })
       );
     })
-
-    //   Error handler
+    // Middleware Error Handler
     .use(errorHandler);
 };
 
